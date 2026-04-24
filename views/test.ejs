@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarLogin Test</title>
+    <style>
+        @font-face{
+            font-family: 'Geomanist';
+            src: url('../assets/Geomanist-Regular.otf') format('opentype');
+        }
+        body {
+            font-family: 'Geomanist', sans-serif;
+            color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #ffffff;
+        }
+        .contain {
+            border-radius: 10px;
+            background-color: #fcfcfc;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);            
+        }
+        #output {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #000000;
+            color: #00e41e;
+            font-family: monospace, monospace;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="/sloginbtn.css">
+</head>
+<body>
+    <div class="contain">
+        <h1>StarLogin Test</h1>
+        <span>This is a simple test page for the StarLogin API.</span>
+        <span>Use this page to test out the StarLogin API's functionality.</span>
+        <br>
+        <button class="sl_login_btn"><img src="/assets/skb.png" alt="StarKloud Logo" width="30" height="20"> Login with StarKloud</button>
+        <script>
+            document.querySelector('.sl_login_btn').addEventListener('click', function() {
+                var popupName = 'starlogin_auth_popup';
+                window.open('', popupName, 'width=500,height=700');
+
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/authenticate';
+                form.target = popupName;
+
+                var params = {
+                    provider: 'Spotify AB',
+                    providerimg: 'https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png',
+                    providerurl: 'https://www.mastercard.com',
+                    callbackurl: 'http://localhost:3000/callback'
+                };
+
+                Object.keys(params).forEach(function(key) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = params[key];
+                    form.appendChild(input);
+                });
+
+                document.body.appendChild(form);
+                form.submit();
+                document.body.removeChild(form);
+            });
+        </script>
+        <div class="output" id="output">Here is where the output will be displayed.</div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,19 @@
+@font-face {
+    font-family: 'Geomanist';
+    src: url('../assets/Geomanist-Regular.otf') format('opentype');
+}
+.sl_login_btn{
+    font-family: 'Geomanist', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background-color: #fff;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    color: #000000;
+}

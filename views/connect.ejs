@@ -245,7 +245,41 @@
                 justify-content: center !important;
             }
         }
-
+        .permission{
+            margin-top: 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.38);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .intro {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        .permission-list {
+            margin: 12px 0 0;
+            padding-left: 18px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+        .permission-list li + li {
+            margin-top: 6px;
+        }
+        .bold{
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .declaration {
+            margin-top: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.8);
+        }
     </style>
 </head>
 <body>
@@ -253,25 +287,19 @@
         <div class="provider">
             <img src="../assets/skw.png" alt="StarKloud Auth" style="max-width: 80px; height: auto;"> <img src="../assets/swap.png" alt="connection to" style="max-width: 20px; height: auto;"> <img src="<%= provider_img %>" alt="<%= provider %>" style="max-width: 70px; height: auto;" class="provider-img">
         </div>
-        <h2 style="text-align: center;"> <%= provider %> wants you to login securely via StarKloud</h2>
-        <form action="/login" method="POST">
-            <input type="hidden" name="provider" value="<%= provider %>">
-            <input type="hidden" name="providerimg" value="<%= provider_img %>">
-
-        <div class="input-wrap">
-            <label class="input-label" for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="Enter your email" autocomplete="email">
+        <h2 style="text-align: center;">Connect your StarKloud account</h2>
+        <span class="intro"><%= provider %> is requesting access to:</span>
+        <div class="permission">
+            <span class="bold">Requested permissions</span>
+            <ul class="permission-list">
+                <li>Email address</li>
+                <li>Full name</li>
+            </ul>
         </div>
-        <div class="input-wrap">
-            <label class="input-label" for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password">
-        </div>
-        <button type="submit">Login</button>
-        <div class="a-style">
-            <a style="justify-content: flex-start;" href="/register">Create account</a>
-            <a style="justify-content: flex-end;" href="/forgot-password">Forgot password?</a>
-        </div>
+        <form action="/authorize" method="POST">
+            <button type="submit">Continue to <%= provider %></button>
         </form>
+        <span class="declaration">By continuing, you agree to the terms of <a href="<%= locals.provider_url %>" target="_blank"><%= provider %></a> and <a href="/TOS" target="_blank">StarKloud</a>.</span>
     </div>
 </body>
 </html>

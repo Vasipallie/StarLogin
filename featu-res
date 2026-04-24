@@ -1,8 +1,0 @@
- These are some of the features StarLogin will have
-    - SimpleSites (google sites)
-        ->if your website has a single page for members to access, we have it
-        ->if your website has different member pages for each person (legacy support/WILL NOT BE MAINTAINED)
-
-    - StarLogin (normal)
-        -> allows developers to access user email, name, DOB etc.
-        -> Simpler & STRAIGHTFORWARD 

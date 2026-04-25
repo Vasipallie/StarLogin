@@ -268,6 +268,7 @@
         <form action="/login" method="POST">
             <input type="hidden" name="provider" value="<%= provider %>">
             <input type="hidden" name="providerimg" value="<%= provider_img %>">
+            <input type="hidden" name="authid" value="<%= authid || '' %>">
             <% if (locals.error) { %>
                 <span class="error"><%= locals.error %></span>
             <% } %>
@@ -281,10 +282,13 @@
         </div>
         <button type="submit">Login</button>
         <div class="a-style">
-            <a style="justify-content: flex-start;" href="/register">Create account</a>
+            <button type="submit" id="register" formaction="/creater" formmethod="POST" name="authID" value="<%= authid || '' %>" style="margin: 0; background: none; border: none; color: #FF5F00; padding: 0; width: auto; font-size: 14px; font-weight: 400; text-align: left;">Create account</button>
             <a style="justify-content: flex-end;" href="/forgot-password">Forgot password?</a>
         </div>
         </form>
     </div>
+    <script>
+        
+    </script>
 </body>
 </html>

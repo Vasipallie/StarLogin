@@ -29,7 +29,21 @@ function randoimg(){
     return img;
 }
 app.route('/').get((req, res) => {
-    res.render('test');
+    res.redirect('/test');
+});
+app.post('/creater', async (req, res) => {
+    const { authID } = req.body;
+    if (!authID) {
+        return res.status(400).send('Missing authID.');
+    }
+    const { data, error } = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
+    if (error || !data){
+        console.error('Error fetching auth details:', error);
+        return res.status(500).send('Error fetching authentication details. Please try again later.');
+    }
+    const provider = data.AuthName;
+    const provider_img = data.AuthImg;
+    res.render('create_auth', {provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg()  });
 });
 
 app.route('/dashboard').get((req, res) => {
@@ -67,33 +81,31 @@ app.post('/updateDetails', async (req, res)=> {
 
 app.route('/login/:authid').get(async (req, res) => {
     const { authid } = req.params;
-    console.log(authid);
     const { data, error } = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authid).single();
-    console.log(data);
     if (error || !data){
         res.status(500).send('Error fetching authentication details. Please try again later.');
     }
         else {
-            console.log(data);
-            const provider = data.provider || data.AuthName || 'Unknown Provider';
-            const provider_img = data.AuthImg || 'https://via.placeholder.com/150';
+            const provider = data.provider || data.AuthName;
+            const provider_img = data.AuthImg ;
             
-            res.render('login', { provider, provider_img, bckimg: 'assets/bcks/' + randoimg() });
+            res.render('login', { provider, provider_img, bckimg: 'assets/bcks/' + randoimg(), authid: authid });
         }
 
 });
 
 app.post('/login', async (req, res) => {
-    const {email, password, provider, providerimg} = req.body;
+    const {email, password, provider, providerimg, authid} = req.body;
     const {data,error} = await supabaseClient.auth.signInWithPassword({email, password});
     if (error) {
         console.error('Error signing in:', error);
         return res.status(401).render('login', {
-            provider: provider || 'Unknown Provider',
-            provider_img: providerimg || 'https://via.placeholder.com/150',
+            provider: provider ,
+            provider_img: providerimg ,
             bckimg: 'assets/bcks/' + randoimg(),
             error: 'Invalid email or password',
-            email
+            email,
+            authid
         });
     }
         else {

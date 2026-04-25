@@ -5,7 +5,6 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv'; 
 import { createClient } from '@supabase/supabase-js';
 import cookieParser from 'cookie-parser';
-import crypto from 'crypto';
 
 dotenv.config();
 
@@ -48,28 +47,48 @@ app.post('/creater', async (req, res) => {
 
 app.post('/create-account', async (req, res) =>{
     const {email, password, name, lname, authID} =req.body;
-    const {data, error} = await supabaseClient.auth.signUp({email, password});
+    const nEmail = (email).trim().toLowerCase();
+    const nName = (name).trim();
+    const nLname = (lname).trim();
+
+    if (!authID) {
+        return res.status(400).send('authID is not provided. Please contact your website administrator.');
+    }
+
+    if (!nEmail || !password) {
+        const {data: dataa, error: errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
+        if (errorr || !dataa) {
+            return res.status(500).send('Error fetching auth details. Please try again later.');
+        }
+        return res.status(400).render('create_auth', {provider: dataa.AuthName, provider_img:dataa.AuthImg,authID,bckimg: 'assets/bcks/' + randoimg(),error: 'Email and password are required.'
+    });
+    }
+
+    const {data, error} = await supabaseClient.auth.signUp({email: nEmail, password});
+    console.log(data);
     if (error){
         console.error('Error signing up:', error);
-        const {dataa, errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
+        const {data: dataa, error: errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
         if (errorr){
-            res.status(500).send('Error fetching auth details:', errorr);
+            return res.status(500).send('Error fetching auth details. Please try again later.');
         }
-        else{
-            const provider = dataa.AuthName;
-            const provider_img = dataa.AuthImg;
-            res.status(400).render('create_auth', { provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg(), error: 'Error creating account. Please try again.' });
-        }
+        const provider = dataa.AuthName;
+        const provider_img = dataa.AuthImg;
+        return res.status(400).render('create_auth', { provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg(), error: error.message || 'Error creating account. Please try again.' });
     }
-    else{
-        const uuid = data.user.id;
-        const {dataa, errorr} = await supabaseClient.from('users').insert({uid:uuid, email, name, lname}).select().single();
-        if (errorr){
-            console.error('Error inserting user data:', errorr);
+
+    const uuid = data?.user?.id;
+    if (uuid) {
+        const { error: insertError } = await supabaseClient
+            .from('users')
+            .upsert({ uid: uuid, email: nEmail, name: nName || null, lname: nLname || null }, { onConflict: 'uid' });
+        if (insertError){
+            console.error('Error inserting user data:', insertError);
             return res.status(500).send('Error saving user data. Please try again later.');
         }
     }
 
+    return res.redirect(`/login/${encodeURIComponent(authID)}?created=1&email=${encodeURIComponent(nEmail)}`);
 } );
 
 app.route('/dashboard').get((req, res) => {
@@ -78,7 +97,7 @@ app.route('/dashboard').get((req, res) => {
 app.post('/dashboard' , async (req, res) =>{
     const { uid, email, fullname, name } = req.body;
     if (!uid) {
-        return res.status(400).send('Missing login payload. Please try again.');
+        return res.status(400).send('Missing login data. Please try again. Contact your website administrator.');
     }
 
     const {data, error} = await supabaseClient.from('AuthAPI').select('*').eq('uuid', uid).single();
@@ -107,6 +126,7 @@ app.post('/updateDetails', async (req, res)=> {
 
 app.route('/login/:authid').get(async (req, res) => {
     const { authid } = req.params;
+    const { created, email } = req.query;
     const { data, error } = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authid).single();
     if (error || !data){
         res.status(500).send('Error fetching authentication details. Please try again later.');
@@ -115,24 +135,21 @@ app.route('/login/:authid').get(async (req, res) => {
             const provider = data.provider || data.AuthName;
             const provider_img = data.AuthImg ;
             
-            res.render('login', { provider, provider_img, bckimg: 'assets/bcks/' + randoimg(), authid: authid });
-        }
+            res.render('login', {provider,provider_img,bckimg: 'assets/bcks/' + randoimg(), authid: authid, email: email});
+            }
 
 });
 
 app.post('/login', async (req, res) => {
     const {email, password, provider, providerimg, authid} = req.body;
-    const {data,error} = await supabaseClient.auth.signInWithPassword({email, password});
+    const nEmail = (email || '').trim().toLowerCase();
+    if (!nEmail || !password) {
+        return res.status(400).render('login', {provider,provider_img: providerimg, bckimg: 'assets/bcks/' + randoimg(),error: 'Email and password are required', email: nEmail,authid});
+    }
+
+    const {data,error} = await supabaseClient.auth.signInWithPassword({email: nEmail, password});
     if (error) {
         console.error('Error signing in:', error);
-        return res.status(401).render('login', {
-            provider: provider ,
-            provider_img: providerimg ,
-            bckimg: 'assets/bcks/' + randoimg(),
-            error: 'Invalid email or password',
-            email,
-            authid
-        });
     }
         else {
             const uuid = data.user.id
@@ -143,17 +160,18 @@ app.post('/login', async (req, res) => {
             }
                 else {
                   const  payload ={
-                        loginevent: 'login_success',
-                        email: data.user.email,
-                        fullname: data.user.name,
-                        uid: data.user.id
-                    }
-                    res.render('success', { bckimg: 'assets/bcks/' + randoimg(),provider, provider_img: providerimg || 'https://via.placeholder.com/150', 'txdata':payload });
+                    loginevent: 'login_success',
+                    email: data.user.email,
+                    fullname: data.user.name,
+                    uid: data.user.id
+                }
+                    res.render('success', { bckimg: 'assets/bcks/' + randoimg(),provider, provider_img: providerimg, 'txdata':payload });
                 }
             }
 
 });
-//JUST SERVER STUFF
+
+//server start 
 app.listen(3000, () => {
     console.log('Server started on http://localhost:3000');
 });

@@ -256,6 +256,17 @@
             font-size: 14px;
             text-align: center;
         }
+        .notice{
+            display: block;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #1f7a1f;
+            color: #ffffff;
+            font-family: 'Geomanist', sans-serif;
+            font-size: 14px;
+            text-align: center;
+        }
 
     </style>
 </head>
@@ -269,6 +280,9 @@
             <input type="hidden" name="provider" value="<%= provider %>">
             <input type="hidden" name="providerimg" value="<%= provider_img %>">
             <input type="hidden" name="authid" value="<%= authid || '' %>">
+            <% if (locals.notice) { %>
+                <span class="notice"><%= locals.notice %></span>
+            <% } %>
             <% if (locals.error) { %>
                 <span class="error"><%= locals.error %></span>
             <% } %>

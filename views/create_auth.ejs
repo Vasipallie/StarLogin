@@ -254,6 +254,17 @@
             gap:10px;
             margin-block: 30px;
         }
+        .error{
+            display: block;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: #ffffff;
+            font-family: 'Geomanist', sans-serif;
+            font-size: 14px;
+            text-align: center;
+        }
         input[type="text"]{
             width: 100%;
             box-sizing: border-box;
@@ -277,8 +288,11 @@
                 <h2 style="text-align: center;">Create a StarKloud Account</h2>
                 <hr>
                 <span style="text-align: center;">Create an account to continue to <%= provider %></span>
-        <form action="/login" method="POST">
+        <form action="/create-account" method="POST">
             <input type="hidden" name="authID" value="<%= authID %>">
+            <% if (locals.error) { %>
+                <span class="error"><%= locals.error %></span>
+            <% } %>
             <div>
                 <div class="nameHolders">
                     <div>

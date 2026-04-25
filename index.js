@@ -28,7 +28,7 @@ function randoimg(){
     return img;
 }
 app.route('/').get((req, res) => {
-    res.redirect('/test');
+    res.redirect('/dashboard');
 });
 app.post('/creater', async (req, res) => {
     const { authID } = req.body;

@@ -1,3 +1,4 @@
 /.env
 /.vscode-snapshots
 /node_modules
+.gitignore

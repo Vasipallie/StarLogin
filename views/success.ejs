@@ -245,6 +245,18 @@
                 justify-content: center !important;
             }
         }
+        
+        .error{
+            display: block;
+            margin-top: 12px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ff4d4d;
+            color: #ffffff;
+            font-family: 'Geomanist', sans-serif;
+            font-size: 14px;
+            text-align: center;
+        }
 
     </style>
 </head>
@@ -253,16 +265,25 @@
         <div class="provider">
             <img src="../assets/skw.png" alt="StarKloud Auth" style="max-width: 80px; height: auto;"> <img src="../assets/swap.png" alt="connection to" style="max-width: 20px; height: auto;"> <img src="<%= provider_img %>" alt="<%= provider %>" style="max-width: 70px; height: auto;" class="provider-img">
         </div>
-        <h2 style="text-align: center;"> <%= provider %> wants you to login securely via StarKloud</h2>
         <form action="/login" method="POST">
             <input type="hidden" name="provider" value="<%= provider %>">
             <input type="hidden" name="providerimg" value="<%= provider_img %>">
 
             <div>
-                <h1>Auth Failed</h1>
-                <span>StarLogin has not been setup properly, please contact the website administrator</span>
+                <h1>Login Successful</h1>
+                <p>Close this window to continue to <%= provider %></p>
             </div>
         </form>
         
+        <script>
+            window.onload = function() {
+                const payload = <%- JSON.stringify(txdata) %>;
+                const parenturl = new URL(document.referrer);
+
+                if (window.opener && !window.opener.closed) {
+                    window.opener.postMessage(payload, parenturl.origin);
+                }
+            };
+        </script>
 </body>
 </html>

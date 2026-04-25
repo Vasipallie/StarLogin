@@ -36,30 +36,32 @@ app.route('/dashboard').get((req, res) => {
     res.render('dashboardlogin', { bckimg: 'assets/bcks/' + randoimg() });
 });
 app.post('/dashboard' , async (req, res) =>{
-    if (error) {
-        console.error('Error signing in:', error);
-        res.status(401).send('Invalid email or password');
-    } else {
-        const uuid = data.user.id
-        console.log(uuid);
-        const {dataa, errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', uuid).single();
-        if (errorr){
-            res.status(500).send('Error fetching user data');
-        } else {
-            res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': dataa.AuthID, 'authName': dataa.authName, 'AuthImg': dataa.AuthImg, 'AuthTos': dataa.AuthTos, 'AuthBack': dataa.AuthBack });
-        }
+    const { uid, email, fullname, name } = req.body;
+    if (!uid) {
+        return res.status(400).send('Missing login payload. Please try again.');
+    }
+
+    const {data, error} = await supabaseClient.from('AuthAPI').select('*').eq('uuid', uid).single();
+    if (error){
+        res.status(500).send('Error fetching authentication details. Please try again later.');
+    }
+    else if (!data) {
+        res.status(404).send('Authentication details not found.');
+    }
+    else{
+        res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': data.AuthID, 'authName': data.AuthName, 'AuthImg': data.AuthImg, 'AuthTos': data.AuthTos, 'AuthBack': data.AuthBack });
     }
 });
 
 app.post('/updateDetails', async (req, res)=> {
     const {AuthID, authName, AuthImg, AuthTos, AuthBack} = req.body;
-    const {data, error} = await supabaseClient.from('AuthAPI').update({ authName, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
+    const {data, error} = await supabaseClient.from('AuthAPI').update({ AuthID, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
     if (error){
-        res.status(5000).send('StarAPI failed to update your details. Please try again later.');
+        console.error('Error updating details:', error);
+        return res.status(500).send('StarAPI failed to update your details. Please try again later.');
     }
     else{
-        res.status(200).send('StarAPI successfully updated your details!');
-        res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': AuthID, 'authName': authName, 'AuthImg': AuthImg, 'AuthTos': AuthTos, 'AuthBack': AuthBack });
+        return res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': AuthID, 'authName': authName, 'AuthImg': AuthImg, 'AuthTos': AuthTos, 'AuthBack': AuthBack, 'success': 'Details updated successfully!' });
     }
 })
 
@@ -102,7 +104,13 @@ app.post('/login', async (req, res) => {
                 res.status(500).send('Error fetching user data');
             }
                 else {
-                    
+                  const  payload ={
+                        loginevent: 'login_success',
+                        email: data.user.email,
+                        fullname: data.user.name,
+                        uid: data.user.id
+                    }
+                    res.render('success', { bckimg: 'assets/bcks/' + randoimg(),provider, provider_img: providerimg || 'https://via.placeholder.com/150', 'txdata':payload });
                 }
             }
 

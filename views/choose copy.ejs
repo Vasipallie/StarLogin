@@ -245,17 +245,6 @@
                 justify-content: center !important;
             }
         }
-        .error{
-            display: block;
-            margin-top: 12px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #ff4d4d;
-            color: #ffffff;
-            font-family: 'Geomanist', sans-serif;
-            font-size: 14px;
-            text-align: center;
-        }
 
     </style>
 </head>
@@ -268,23 +257,12 @@
         <form action="/login" method="POST">
             <input type="hidden" name="provider" value="<%= provider %>">
             <input type="hidden" name="providerimg" value="<%= provider_img %>">
-            <% if (locals.error) { %>
-                <span class="error"><%= locals.error %></span>
-            <% } %>
-        <div class="input-wrap">
-            <label class="input-label" for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="Enter your email" autocomplete="email" value="<%= locals.email || '' %>">
-        </div>
-        <div class="input-wrap">
-            <label class="input-label" for="password">Password</label>
-            <input id="password" name="password" type="password" placeholder="Enter your password" autocomplete="current-password">
-        </div>
-        <button type="submit">Login</button>
-        <div class="a-style">
-            <a style="justify-content: flex-start;" href="/register">Create account</a>
-            <a style="justify-content: flex-end;" href="/forgot-password">Forgot password?</a>
-        </div>
+
+            <div>
+                <h1>Auth Failed</h1>
+                <span>StarLogin has not been setup properly, please contact the website administrator</span>
+            </div>
         </form>
-    </div>
+        
 </body>
 </html>

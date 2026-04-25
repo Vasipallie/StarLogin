@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarLogin API Dashboard</title>
+    <style>
+        
+        @font-face{
+            font-family: 'Geomanist';
+            src: url('../assets/Geomanist-Regular.otf') format('opentype');
+        }
+        @font-face{
+            font-family: 'OpenSans';
+            src: url('../assets/opensans.ttf') format('truetype');
+        }
+        body {
+            font-family: 'OpenSans', sans-serif;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #303030;
+            background-image: url('../<%= bckimg %>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            
+        }
+        .contain{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0;
+            background: linear-gradient(135deg,#2a1d18, #000000);
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.342);
+            padding: 20px;
+            border-radius: 10px;
+            width: min(100%, 400px);
+            max-width: 400px;
+            max-height: 900px;
+        }
+        .contain > * {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        
+        #output {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #000000;
+            font-family: monospace, monospace;
+            width: 100%;
+            text-align: center;
+        }
+        label{
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .input-wrap{
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+    
+    <link rel="stylesheet" href="../sloginbtn.css">
+</head>
+<body>
+    <div class="contain">
+        <h1>StarLogin API Dashboard</h1>
+        <span>Please Login Via StarKloud to continue</span>
+        <br>
+    <button id="sl_login_button" class="sl_login_btn"><img src="/assets/skb.png" alt="StarKloud Logo" width="30" height="20"> Login with StarKloud</button>
+    </div>
+    
+    <script>
+        document.getElementById('sl_login_button').addEventListener('click', function(){
+            window.open('/login/StarAPI', 'starlogin_auth_popup', 'width=500,height=700');
+        })
+    </script>
+    
+</body>
+</html>

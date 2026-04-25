@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarLogin API Dashboard</title>
+    <style>
+        
+        @font-face{
+            font-family: 'Geomanist';
+            src: url('../assets/Geomanist-Regular.otf') format('opentype');
+        }
+        @font-face{
+            font-family: 'OpenSans';
+            src: url('../assets/opensans.ttf') format('truetype');
+        }
+        body {
+            font-family: 'OpenSans', sans-serif;
+            color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #303030;
+            background-image: url('../<%= bckimg %>');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            
+        }
+        .contain{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0;
+            background: linear-gradient(135deg,#2a1d18, #000000);
+            box-shadow: 0 4px 8px rgba(255, 255, 255, 0.342);
+            padding: 20px;
+            border-radius: 10px;
+            width: min(100%, 400px);
+            max-width: 400px;
+            max-height: 900px;
+        }
+        .contain > * {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        
+        #output {
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffffff;
+            color: #000000;
+            font-family: monospace, monospace;
+            width: 100%;
+            text-align: center;
+        }
+        label{
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .input-wrap{
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    </style>
+    
+    <link rel="stylesheet" href="../sloginbtn.css">
+</head>
+<body>
+
+    <div class="contain">
+        <h2>Dashboard</h2>
+        <form method="post" action="/updateDetails">
+            
+        <span>Your StarLogin API Key:</span>
+            <input type="text" name="apiKey" value="<%= locals.AuthID %>" ><br><br>
+            <label for="authName">Display Name for your API Key:</label>
+            <br>
+            <input type="text" name="authName" placeholder="Your Display Name" class="input-wrap" value="<%= locals.authName %>"><br>
+
+            <label for="AuthImg">Application Image URL:</label><br>
+            <input type="text" name="AuthImg" placeholder="https://example.com/image.png" class="input-wrap" value="<%= locals.AuthImg %>"><br>
+
+            <label for="AuthTos">Terms of Service URL:</label><br>
+            <input type="text" name="AuthTos" placeholder="https://example.com/terms" class="input-wrap" value="<%= locals.AuthTos %>"><br>
+
+            <label for="AuthBack">Callback URL:</label><br>
+            <input type="text" name="AuthBack" placeholder="https://example.com/callback" class="input-wrap" value="<%= locals.AuthBack %>">
+
+            <button type="submit" class="sl_login_btn" style="width: 100%; margin-top: 20px;">Update Details</button>
+        </form>
+    </div>
+</body>
+</html>

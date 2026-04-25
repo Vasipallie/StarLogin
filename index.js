@@ -46,6 +46,32 @@ app.post('/creater', async (req, res) => {
     res.render('create_auth', {provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg()  });
 });
 
+app.post('/create-account', async (req, res) =>{
+    const {email, password, name, lname, authID} =req.body;
+    const {data, error} = await supabaseClient.auth.signUp({email, password});
+    if (error){
+        console.error('Error signing up:', error);
+        const {dataa, errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
+        if (errorr){
+            res.status(500).send('Error fetching auth details:', errorr);
+        }
+        else{
+            const provider = dataa.AuthName;
+            const provider_img = dataa.AuthImg;
+            res.status(400).render('create_auth', { provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg(), error: 'Error creating account. Please try again.' });
+        }
+    }
+    else{
+        const uuid = data.user.id;
+        const {dataa, errorr} = await supabaseClient.from('users').insert({uid:uuid, email, name, lname}).select().single();
+        if (errorr){
+            console.error('Error inserting user data:', errorr);
+            return res.status(500).send('Error saving user data. Please try again later.');
+        }
+    }
+
+} );
+
 app.route('/dashboard').get((req, res) => {
     res.render('dashboardlogin', { bckimg: 'assets/bcks/' + randoimg() });
 });

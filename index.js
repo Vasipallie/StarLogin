@@ -44,6 +44,17 @@ app.route('/choose').get( async(req, res) => {
     res.render('choose', {email , provider, provider_img, bckimg: 'assets/bcks/' + randoimg() });
 });
 
+// authID GENERATOR
+
+function randomString(length) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
 //ACCOUNT CREATION SYSTEMS
 app.post('/creater', async (req, res) => {
     const { authID } = req.body;
@@ -79,7 +90,6 @@ app.post('/create-account', async (req, res) =>{
     }
 
     const {data, error} = await supabaseClient.auth.signUp({email: nEmail, password});
-    console.log(data);
     if (error){
         console.error('Error signing up:', error);
         const {data: dataa, error: errorr} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
@@ -92,17 +102,30 @@ app.post('/create-account', async (req, res) =>{
     }
 
     const uuid = data?.user?.id;
-    if (uuid) {
-        const { error: insertError } = await supabaseClient
-            .from('users')
-            .upsert({ uid: uuid, email: nEmail, name: nName || null, lname: nLname || null }, { onConflict: 'uid' });
+    if (uuid) { 
+        const { error: insertError } = await supabaseClient.from('users').upsert({ uid: uuid, email: nEmail, name: nName, lname: nLname});
         if (insertError){
             console.error('Error inserting user data:', insertError);
             return res.status(500).send('Error saving user data. Please try again later.');
         }
+
+        const { data: existingAuth, error: existingAuthError } = await supabaseClient.from('AuthAPI').select('AuthID').eq('uuid', uuid).maybeSingle();
+        if (existingAuthError) {
+            console.error('Error checking AuthAPI record:', existingAuthError);
+            return res.status(500).send('Error checking API auth record. Please try again later.');
+        }
+        if (!existingAuth) {
+            const authy = randomString(30);
+            const defaultAuthName =`${nName}'s App`;
+            const { error: authInsertError } = await supabaseClient.from('AuthAPI').insert({uuid,AuthID: authy,AuthName: defaultAuthName,AuthImg: '',AuthTos: '',AuthBack: ''});
+            if (authInsertError) {
+                console.error('Error creating AuthAPI record:', authInsertError);
+                return res.status(500).send('Error creating API auth record. Please try again later.');
+            }
+        }
     }
 
-    return res.redirect(`/login/${encodeURIComponent(authID)}?created=1&email=${encodeURIComponent(nEmail)}`);
+    return res.redirect(`/login/${authID}`);
 } );
 
 //API DASHBOARD SYSTEM
@@ -195,7 +218,6 @@ app.post('/login', async (req, res) => {
 app.use((req, res) => {
     res.status(404).render('404', { bckimg: 'assets/bcks/' + randoimg() });
 });
-
 //SERVER STARTS
 app.listen(3000, () => {
     console.log('Server started on http://localhost:3000');

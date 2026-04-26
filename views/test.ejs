@@ -49,38 +49,25 @@
         <span>This is a simple test page for the StarLogin API.</span>
         <span>Use this page to test out the StarLogin API's functionality.</span>
         <br>
-        <button class="sl_login_btn"><img src="/assets/skb.png" alt="StarKloud Logo" width="30" height="20"> Login with StarKloud</button>
-        <script>
-            document.querySelector('.sl_login_btn').addEventListener('click', function() {
-                var popupName = 'starlogin_auth_popup';
-                window.open('', popupName, 'width=500,height=700');
-
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '/authenticate';
-                form.target = popupName;
-
-                var params = {
-                    provider: 'Spotify AB',
-                    providerimg: 'https://www.freepnglogos.com/uploads/spotify-logo-png/file-spotify-logo-png-4.png',
-                    providerurl: 'https://www.mastercard.com',
-                    callbackurl: 'http://localhost:3000/callback'
-                };
-
-                Object.keys(params).forEach(function(key) {
-                    var input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = key;
-                    input.value = params[key];
-                    form.appendChild(input);
-                });
-
-                document.body.appendChild(form);
-                form.submit();
-                document.body.removeChild(form);
-            });
-        </script>
+        <button id="sl_login_button" class="sl_login_btn"><img src="/assets/skb.png" alt="StarKloud Logo" width="30" height="20"> Login with StarKloud</button>
+        <a href="/dashboard">Visit the API Dashboard</a>
         <div class="output" id="output">Here is where the output will be displayed.</div>
     </div>
+    <script>
+    const loginButton = document.getElementById('sl_login_button');
+    if (loginButton) {
+        loginButton.addEventListener('click', function(){
+            window.open('/login/hjCt6lbnL40Vdw5taFV8sPETfiAz5r', 'starlogin_auth_popup', 'width=500,height=700');
+        });
+    }
+        window.addEventListener('message', function(event){
+            if(event.origin !== window.location.origin) return; 
+                 if(event.data.loginevent === 'login_success'){
+                    console.log(event.data);
+                    document.getElementById('output').textContent = JSON.stringify(event.data, null, 2);
+                 }
+        });
+
+    </script>
 </body>
 </html>

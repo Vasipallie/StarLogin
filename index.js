@@ -30,7 +30,7 @@ function randoimg(){
 }
 //AUTO ROUTE TO DASHBOARD
 app.route('/').get((req, res) => {
-    res.redirect('/dashboard');
+    res.render('test');
 });
 
 app.route('/choose').get( async(req, res) => {

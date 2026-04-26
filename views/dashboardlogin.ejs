@@ -84,10 +84,12 @@
     </div>
     
     <script>
-        document.getElementById('sl_login_button').addEventListener('click', function(){
-            window.open('/login/StarAPI', 'starlogin_auth_popup', 'width=500,height=700');
-        })
-        //listen for messages from the popup
+        const loginButton = document.getElementById('sl_login_button');
+        if (loginButton) {
+            loginButton.addEventListener('click', function(){
+                window.open('/login/StarAPI', 'starlogin_auth_popup', 'width=500,height=700');
+            });
+        }
         window.addEventListener('message', function(event){
             if(event.origin !== window.location.origin) return; 
                  if(event.data.loginevent === 'login_success'){

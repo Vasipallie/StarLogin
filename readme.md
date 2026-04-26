@@ -62,3 +62,22 @@ window.addEventListener('message', function(event){
         })
 
 ```
+
+## Tech Stack
+
+Backend: Node.js, Express
+Templating/UI: EJS, HTML, CSS, client-side JavaScript
+Data/Auth: Supabase
+Config/runtime: dotenv, cookie-parser, cors
+Dev tooling: nodemon
+
+## Supabase database setup
+
+Please see the picture to setup your own supabase database (RLS is disabled in this version)
+
+
+![](assets/20260426_140710_image.png)
+
+## Contributions
+
+All contributions to this repo are welcomed. Please create a pull request so i can review and accept changes.

@@ -21,15 +21,30 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabaseClient = createClient(supabaseUrl, supabaseKey);
 
+//RANDOM BACKGROUND IMAGE FUNCTION
 function randoimg(){
     const path = 'views/images';
     const images =['1.jpg','2.jpg','3.jpg','4.jpg','5.jpg','6.jpg','7.jpg','8.jpg','9.jpg','10.jpg','11.jpg']
     const img = images[Math.floor(Math.random() * images.length)]
     return img;
 }
+//AUTO ROUTE TO DASHBOARD
 app.route('/').get((req, res) => {
     res.redirect('/dashboard');
 });
+
+app.route('/choose').get( async(req, res) => {
+    const authID = 'StarAPI';
+    const email = 'vasip@gmail.com'
+    const {data, error} = await supabaseClient.from('AuthAPI').select('*').eq('AuthID', authID).single();
+    const provider = data.AuthName;
+    const provider_img = data.AuthImg;
+
+
+    res.render('choose', {email , provider, provider_img, bckimg: 'assets/bcks/' + randoimg() });
+});
+
+//ACCOUNT CREATION SYSTEMS
 app.post('/creater', async (req, res) => {
     const { authID } = req.body;
     if (!authID) {
@@ -44,7 +59,6 @@ app.post('/creater', async (req, res) => {
     const provider_img = data.AuthImg;
     res.render('create_auth', {provider, provider_img, authID, bckimg: 'assets/bcks/' + randoimg()  });
 });
-
 app.post('/create-account', async (req, res) =>{
     const {email, password, name, lname, authID} =req.body;
     const nEmail = (email).trim().toLowerCase();
@@ -91,6 +105,7 @@ app.post('/create-account', async (req, res) =>{
     return res.redirect(`/login/${encodeURIComponent(authID)}?created=1&email=${encodeURIComponent(nEmail)}`);
 } );
 
+//API DASHBOARD SYSTEM
 app.route('/dashboard').get((req, res) => {
     res.render('dashboardlogin', { bckimg: 'assets/bcks/' + randoimg() });
 });
@@ -111,7 +126,6 @@ app.post('/dashboard' , async (req, res) =>{
         res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': data.AuthID, 'authName': data.AuthName, 'AuthImg': data.AuthImg, 'AuthTos': data.AuthTos, 'AuthBack': data.AuthBack });
     }
 });
-
 app.post('/updateDetails', async (req, res)=> {
     const {AuthID, authName, AuthImg, AuthTos, AuthBack} = req.body;
     const {data, error} = await supabaseClient.from('AuthAPI').update({ AuthID, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
@@ -124,6 +138,8 @@ app.post('/updateDetails', async (req, res)=> {
     }
 })
 
+
+//LOGIN AUTH SYSTEM
 app.route('/login/:authid').get(async (req, res) => {
     const { authid } = req.params;
     const { created, email } = req.query;
@@ -139,7 +155,6 @@ app.route('/login/:authid').get(async (req, res) => {
             }
 
 });
-
 app.post('/login', async (req, res) => {
     const {email, password, provider, providerimg, authid} = req.body;
     const nEmail = (email || '').trim().toLowerCase();
@@ -171,7 +186,13 @@ app.post('/login', async (req, res) => {
 
 });
 
-//server start 
+
+// 404 PAGE
+app.use((req, res) => {
+    res.status(404).render('404', { bckimg: 'assets/bcks/' + randoimg() });
+});
+
+//SERVER STARTS
 app.listen(3000, () => {
     console.log('Server started on http://localhost:3000');
 });

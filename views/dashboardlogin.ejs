@@ -90,7 +90,9 @@
         //listen for messages from the popup
         window.addEventListener('message', function(event){
             if(event.origin !== window.location.origin) return; 
-                if(event.data.loginevent === 'login_success'){
+                 if(event.data.loginevent === 'login_success'){
+                    console.log(event.data);
+                    
                     const form = document.createElement('form');
                     form.method = 'POST';
                     form.action = '/dashboard';
@@ -106,9 +108,8 @@
                     document.body.appendChild(form);
                     form.submit();
 
-                }
-            
-        })
+                } 
+        });
     </script>
     
 </body>

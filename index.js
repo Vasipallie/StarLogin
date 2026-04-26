@@ -169,16 +169,20 @@ app.post('/login', async (req, res) => {
         else {
             const uuid = data.user.id
             console.log(uuid);
-            const {dataa, errorr} = await supabaseClient.from('users').select('*').eq('uid', uuid).single();
-            if (errorr){
+            const {data: dataa, error: errorr} = await supabaseClient.from('users').select('*').eq('uid', uuid).single();
+            
+                    console.log(dataa);
+            if (error){
                 res.status(500).send('Error fetching user data');
             }
                 else {
+                    console.log(dataa);
                   const  payload ={
                     loginevent: 'login_success',
-                    email: data.user.email,
-                    fullname: data.user.name,
-                    uid: data.user.id
+                    email: dataa.email,
+                    name: dataa.name,
+                    lname: dataa.lname,
+                    uid: dataa.uid
                 }
                     res.render('success', { bckimg: 'assets/bcks/' + randoimg(),provider, provider_img: providerimg, 'txdata':payload });
                 }

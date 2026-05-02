@@ -146,18 +146,18 @@ app.post('/dashboard' , async (req, res) =>{
         res.status(404).send('Authentication details not found.');
     }
     else{
-        res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': data.AuthID, 'authName': data.AuthName, 'AuthImg': data.AuthImg, 'AuthTos': data.AuthTos, 'AuthBack': data.AuthBack });
+        res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': data.AuthID, 'AuthName': data.AuthName, 'AuthImg': data.AuthImg, 'AuthTos': data.AuthTos, 'AuthBack': data.AuthBack });
     }
 });
 app.post('/updateDetails', async (req, res)=> {
-    const {AuthID, authName, AuthImg, AuthTos, AuthBack} = req.body;
+    const {AuthID, AuthName, AuthImg, AuthTos, AuthBack} = req.body;
     const {data, error} = await supabaseClient.from('AuthAPI').update({ AuthName, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
     if (error){
         console.error('Error updating details:', error);
         return res.status(500).send('StarAPI failed to update your details. Please try again later.');
     }
     else{
-        return res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': AuthID, 'authName': authName, 'AuthImg': AuthImg, 'AuthTos': AuthTos, 'AuthBack': AuthBack, 'success': 'Details updated successfully!' });
+        return res.render('dashboard', { 'bckimg': 'assets/bcks/' + randoimg(), 'AuthID': AuthID, 'AuthName': AuthName, 'AuthImg': AuthImg, 'AuthTos': AuthTos, 'AuthBack': AuthBack, 'success': 'Details updated successfully!' });
     }
 })
 
@@ -219,6 +219,6 @@ app.use((req, res) => {
     res.status(404).render('404', { bckimg: 'assets/bcks/' + randoimg() });
 });
 //SERVER STARTS
-app.listen(3000, () => {
-    console.log('Server started on http://localhost:3000');
+app.listen(3010, () => {
+    console.log('Server started on http://localhost:3010');
 });

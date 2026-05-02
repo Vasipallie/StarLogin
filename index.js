@@ -151,7 +151,7 @@ app.post('/dashboard' , async (req, res) =>{
 });
 app.post('/updateDetails', async (req, res)=> {
     const {AuthID, authName, AuthImg, AuthTos, AuthBack} = req.body;
-    const {data, error} = await supabaseClient.from('AuthAPI').update({ AuthID, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
+    const {data, error} = await supabaseClient.from('AuthAPI').update({ AuthName, AuthImg, AuthTos, AuthBack}).eq('AuthID', AuthID);
     if (error){
         console.error('Error updating details:', error);
         return res.status(500).send('StarAPI failed to update your details. Please try again later.');

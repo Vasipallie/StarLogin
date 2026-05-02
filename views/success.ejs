@@ -276,14 +276,22 @@
         </form>
         
         <script>
-            window.onload = function() {
+            window.addEventListener('load', function() {
                 const payload = <%- JSON.stringify(txdata) %>;
-                const parenturl = new URL(document.referrer);
+                let targetOrigin = window.location.origin;
+
+                if (document.referrer) {
+                    try {
+                        targetOrigin = new URL(document.referrer).origin;
+                    } catch (error) {
+                        targetOrigin = window.location.origin;
+                    }
+                }
 
                 if (window.opener && !window.opener.closed) {
-                    window.opener.postMessage(payload, parenturl.origin);
+                    window.opener.postMessage(payload, targetOrigin);
                 }
-            };
+            });
         </script>
 </body>
 </html>
